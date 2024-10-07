@@ -4,7 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+// Instead of handling errors in each controlle
+// r, a single @ControllerAdvice class handles them globally
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

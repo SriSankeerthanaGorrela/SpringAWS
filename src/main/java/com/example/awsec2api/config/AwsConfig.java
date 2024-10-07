@@ -8,7 +8,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
-@Configuration
+@Configuration//it tells that this class contains bean definitions
 public class AwsConfig {
 
     @Value("${aws.accessKeyId}")
@@ -20,7 +20,11 @@ public class AwsConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
-    @Bean
+    @Bean// bean is a blueprint that tells spring container how to create instatiate and configure object
+//     Spring Container is responsible for:
+// Creating an instance of UserService.
+// Creating an instance of UserRepository.
+// Injecting UserRepository into UserService via the constructor. 
     public Ec2Client ec2Client() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(awsAccessKeyId, awsSecretKey);
         return Ec2Client.builder()

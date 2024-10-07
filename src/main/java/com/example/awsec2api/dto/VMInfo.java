@@ -1,5 +1,7 @@
 package com.example.awsec2api.dto;
-
+// The purpose of VMInfo is to represent a single EC2 instance with two key pieces of information:
+// instanceId: The unique ID of the EC2 instance.
+// state: The current state of the instance (e.g., running, stopped).
 public class VMInfo {
     private String instanceId;
     private String state;

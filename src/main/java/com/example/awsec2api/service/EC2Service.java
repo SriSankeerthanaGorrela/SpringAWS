@@ -15,16 +15,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class EC2Service {
-
+    // The Logger is used to log important events, such as instance creation,
+    //  retrieval, and deletion, and to capture errors.
     private static final Logger logger = LoggerFactory.getLogger(EC2Service.class);
 
     private final Ec2Client ec2Client;
 
     @Autowired
+    // It is configured in the AwsConfig 
+    // class to provide credentials, region, and other 
+    // configurations.
     public EC2Service(Ec2Client ec2Client) {
         this.ec2Client = ec2Client;
     }
-
+ //creating new ec2 instance//
     public String createVM() {
         try {
             RunInstancesRequest runRequest = RunInstancesRequest.builder()
@@ -32,9 +36,9 @@ public class EC2Service {
                     .instanceType(InstanceType.T2_MICRO)
                     .maxCount(1)
                     .minCount(1)
-                    .build();
+                    .build(); //build instance with given specifications/
 
-            RunInstancesResponse response = ec2Client.runInstances(runRequest);
+            RunInstancesResponse response = ec2Client.runInstances(runRequest);//too create ec2 instance
             String instanceId = response.instances().get(0).instanceId();
             logger.info("Created new EC2 instance with ID: {}", instanceId);
             return instanceId;
@@ -44,7 +48,8 @@ public class EC2Service {
         }
     }
 
-    public VMListResponse getActiveVMs() {
+    public VMListResponse getActiveVMs() //retrives a listof active vms
+     {
         try {
             DescribeInstancesRequest request = DescribeInstancesRequest.builder().build();
             DescribeInstancesResponse response = ec2Client.describeInstances(request);
@@ -60,6 +65,23 @@ public class EC2Service {
         } catch (Ec2Exception e) {
             logger.error("Error retrieving active EC2 instances: {}", e.getMessage());
             throw new EC2Exception("Failed to retrieve active EC2 instances", e);
+        }
+    }
+    public String deleteVM(String instanceId) {
+        try {
+            TerminateInstancesRequest terminateRequest = TerminateInstancesRequest.builder()
+                    .instanceIds(instanceId)
+                    .build();
+
+            TerminateInstancesResponse terminateResponse = ec2Client.terminateInstances(terminateRequest);
+            
+            String terminatedInstanceId = terminateResponse.terminatingInstances().get(0).instanceId();
+            logger.info("Terminated EC2 instance with ID: {}", terminatedInstanceId);
+            
+            return terminatedInstanceId;
+        } catch (Ec2Exception e) {
+            logger.error("Error deleting EC2 instance: {}", e.getMessage());
+            throw new EC2Exception("Failed to terminate EC2 instance with ID: " + instanceId, e);
         }
     }
 }
